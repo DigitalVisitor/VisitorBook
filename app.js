@@ -1,9 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000;
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -11,7 +12,7 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // SQLite Database setup
-const db = new sqlite3.Database('./database.db', (err) => {
+const db = new sqlite3.Database(process.env.DATABASE_PATH || '/mnt/data/database.db', (err) => {
     if (err) {
         console.error('Error opening database:', err);
     } else {
@@ -38,7 +39,7 @@ app.get('/', (req, res) => {
 // Serve local PDF
 app.get('/view-pdf', (req, res) => {
     res.setHeader('Content-Type', 'application/pdf');
-    res.sendFile(path.join(__dirname, 'public','/VISITOR-BOOK-ABOUT-US.pdf'), (err) => {
+    res.sendFile(path.join(__dirname, 'public','VISITOR-BOOK-ABOUT-US.pdf'), (err) => {
         if (err) {
             console.error(err);
             res.status(404).send('PDF file not found');
@@ -62,6 +63,7 @@ app.post('/submit-entry', (req, res) => {
     `;
     db.run(query, [date, rank, name, decoration, remarks, signature], function(err) {
         if (err) {
+            console.error('Database Insert Error:', err);
             return res.status(500).json({ error: 'Failed to insert data into the database.' });
         }
         res.status(200).json({ message: 'Entry submitted successfully!' });
