@@ -5,17 +5,64 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const app = express();
 const port = process.env.PORT || 4000;
-
+const fs = require('fs');
+const dbPath = process.env.DATABASE_PATH || '/mnt/data/database.db';
+let db ;
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Check if the directory exists
+fs.access('/mnt/data', fs.constants.F_OK, (err) => {
+    if (err) {
+        console.error("Directory /mnt/data does not exist or is not accessible.");
+        // Create the directory
+        fs.mkdir('/mnt/data', { recursive: true }, (err) => {
+            if (err) {
+                console.error('Error creating /mnt/data directory:', err);
+                return; // If directory creation fails, don't proceed with database
+            }
+            console.log('/mnt/data directory created successfully.');
+            
+            // Now try to open the database
+            openDatabase();
+        });
+    } else {
+        console.log("/mnt/data directory is accessible.");
+        openDatabase();
+    }
+});
+
+// Function to open the SQLite database
+function openDatabase() {
+    const db = new sqlite3.Database(dbPath, (err) => {
+        if (err) {
+            console.error('Error opening database:', err);
+        } else {
+            console.log('Database opened successfully at path:', dbPath);
+        }
+    });
+}
+
+// Check if the database file exists
+fs.access(dbPath, fs.constants.F_OK, (err) => {
+    if (err) {
+        console.log(`Database file does not exist at ${dbPath}. It will be created.`);
+    } else {
+        console.log(`Database file exists at ${dbPath}.`);
+    }
+});
+
 // SQLite Database setup
-const db = new sqlite3.Database(process.env.DATABASE_PATH || '/mnt/data/database.db', (err) => {
+console.log("Database Path:", dbPath);
+
+function openDatabase() {
+ db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
         console.error('Error opening database:', err);
     } else {
+        console.log('Database opened successfully');
         // Create the table if it doesn't exist
         db.run(`
             CREATE TABLE IF NOT EXISTS entries (
@@ -30,7 +77,7 @@ const db = new sqlite3.Database(process.env.DATABASE_PATH || '/mnt/data/database
         `);
     }
 });
-
+}
 // Home route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname,'public', 'index.html'));
