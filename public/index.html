@@ -7,87 +7,125 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <!-- Splash Screen -->
-    <div id="splash-screen">
-        <img src="images/loader.gif" alt="Loader" id="loader-image">
+    <!-- Home Screen -->
+    <div id="logo-screen">
+        <!-- <img src="images/unitlogo.png" alt="Logo" id="logo"> -->
     </div>
 
-    <!-- Main Content -->
     <div id="main-content" class="hidden">
-        <img src="images/fmnsign.png" alt="Left Logo" id="left-logo" class="logo">
-        <img src="images/jimmylogo.png" alt="Right Logo" id="right-logo" class="logo">
-
-        <div id="header">
-            <div class="center-logo">
-                <img src="images/buildingpic.png" alt="Center Logo" width="150">
+        <div class="home-page" id="home-screen">
+            <div class="logos">
+                <img src="images/fmnsign.png" alt="Logo Left" class="logo-left">
+                <img src="images/jimmylogo.png" alt="Logo Right" class="logo-right">
             </div>
-            <h1>Digital Visitor Book</h1>
+            <!-- <img src="path/to/your/background-image.jpg" alt="Background" class="background-image"> -->
+            <div class="logo-center">
+                <img src="images/buildingpic.png" alt="Logo" class="logo">
+            </div>
+            <div class="buttons">
+                <button id="about-us-btn">About Us</button>
+                <button id="view-book-btn">View Book</button>
+                <button id="start-form-btn">Start Form</button>
+            </div>
         </div>
+    </div>
+    <!-- <div id="home-screen">
+        <h1>Welcome to Digital Visitor Book</h1>
+        <button id="about-us-btn">About Us</button>
+        <button id="view-book-btn">View Book</button>
+        <button id="start-form-btn">Start Form</button>
+    </div> -->
 
-        <div id="buttons">
-            <button id="view-pdf">View Sample PDF</button>
-            <button id="view-entries">View Entries</button>
-            <button id="new-entry">New Entry</button>
+    <!-- About Us Screen -->
+    <div id="about-us-screen" class="hidden">
+        <h2>About Us</h2>
+        <iframe src="/view-pdf" width="80%" height="600px"></iframe><br><br>
+        <button id="back-to-home-from-about">Back to Home</button>
+    </div>
+
+    <!-- View Book Screen -->
+    <div id="view-book-screen" class="hidden">
+        <h2>Visitor Entries</h2>
+        <table border="1" id="entries-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Rank & Name</th>
+                    <th>Address</th>
+                    <th>Decoration</th>
+                    <th>Remarks</th>
+                    <th>Photo</th>
+                    <th>Signature</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Entries will be dynamically loaded here -->
+            </tbody>
+        </table><br>
+        <div class="form-actions">
+        <button id="back-to-home-from-book">Back to Home</button>
         </div>
+    </div>
 
-        <!-- Form for New Entry -->
-        <div id="new-entry-form" class="hidden">
-            <form id="visitor-form">
-                <label for="date">Date</label>
-                <input type="date" id="date" name="date" required><br><br>
+    <!-- Start Form Screen -->
+    <div id="start-form-screen" class="hidden">
+        <form id="visitor-form" action="/submit-entry" method="POST" enctype="multipart/form-data">
+            <!-- Form fields from the earlier implementation -->
+            <div class="form-entry-date">
+                <label>Date</label>
+                <input type="text" name="date" id="date">
+            </div>
 
-                <label for="rank">Rank</label>
-                <input type="text" id="rank" name="rank" required><br><br>
+            <div class="form-entry-name">
+                <label>Rank & Name</label>
+                <input type="text" name="name_rank" id="name_rank" required>
+                <label>Decoration</label>
+                <input type="text" name="decoration" id="decoration">
+                
+                <label>Choose Photo</label>
+                <select id="photo_option" name="photo_option">
+                    <option value="">Choose Photo Option</option>
+                    <option value="upload">Upload Photo</option>
+                    <option value="capture">Capture Photo</option>
+                </select>
 
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" required><br><br>
+                <div id="upload-mode" style="display:none;">
+                    <label>Upload Photo</label>
+                    <input type="file" name="photo" id="photo" accept="image/*">
+                </div>
 
-                <label for="decoration">Decoration</label>
-                <input type="text" id="decoration" name="decoration" required><br><br>
+                <div id="capture-mode" style="display:none;">
+                    <video id="video" autoplay></video>
+                    <button type="button" id="capture-btn">Capture</button>
+                    <canvas id="photoCanvas" style="display:none;"></canvas>
+                </div>
+            </div>
 
-                <label for="remarks">Remarks</label>
-                <textarea id="remarks" name="remarks" required></textarea><br><br>
+            <div class="form-entry-address">
+                <label>Address</label>
+                <input type="text" name="address" id="address" required>
+            </div>
 
-                <!-- Signature Canvas -->
-                <label for="signature">Signature</label><br>
-                <canvas id="signature-pad" width="400" height="150" style="border: 1px solid #000;"></canvas><br>
-                <button type="button" id="clear-signature">Clear Signature</button>
-                <input type="hidden" id="signature-data" name="signature"><br><br>
+            <div class="form-entry-remarks">
+                <label>Remarks</label>
+                <textarea name="remarks" id="remarks"></textarea>
+            </div>
 
-                <button type="submit">Submit</button>
-                <button type="button" id="reset-form">Reset</button>
-                <button type="button" id="back-home-from-form">Back to Home</button>
-            </form>
-        </div>
+            <!-- Signature input (Digital Signature Canvas) -->
+            <div class="form-entry-signature">
+                <label>Signature</label>
+                <div class="signature-container">
+                    <canvas id="signatureCanvas"></canvas>
+                    <button type="button" id="clear-signature">Clear Signature</button>
+                    <input type="hidden" name="signature" id="signatureData">
+                </div>
+            </div>
 
-        <!-- View Entries -->
-        <div id="entries-list" class="hidden">
-            <h2>Visitor Entries</h2>
-            <table border="1" id="entries-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Rank</th>
-                        <th>Name</th>
-                        <th>Decoration</th>
-                        <th>Remarks</th>
-                        <th>Signature</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Entries will be dynamically loaded here -->
-                </tbody>
-            </table>
-            <button id="back-home">Back to Home</button>
-        </div>
-
-        <!-- PDF Viewer -->
-        <div id="pdf-viewer" class="hidden">
-            <h2>Sample PDF</h2>
-            <iframe src="/view-pdf" width="80%" height="600px"></iframe><br><br>
-            <button id="back-home-from-pdf">Back to Home</button>
-        </div>
+            <input type="hidden" name="captured_image" id="captured_image">
+            <button type="submit">Submit</button>
+            <button type="button" id="reset-form">Reset</button>
+        </form>
+        <button id="back-to-home-from-form">Back to Home</button>
     </div>
 
     <script src="script.js"></script>
