@@ -1,4 +1,4 @@
-body {
+/* body {
     font-family: Arial, sans-serif;
     text-align: center;
     background: linear-gradient(138deg, rgba(113, 188, 246, 1) 0%, rgba(7, 7, 136, 1) 36%, rgb(0 128 43) 80%);
@@ -23,9 +23,9 @@ body {
 #loader-image {
     width: 100px;
     height: 100px;
-}
+} */
 /* Position the left and right logos */
-.logo {
+/* .logo {
     position: absolute;
     top: 20px;
     width: 100px;
@@ -85,4 +85,446 @@ body {
 }
 .hidden {
     display: none;
+} */
+
+/* General Styles */
+/* General Styles */
+/* General styles */
+/* Default state: Hidden */
+.hidden {
+    display: none;
 }
+
+/* When shown, make sure it's visible */
+.show-content {
+    display: block;
+}
+
+#visitor-form {
+    margin: 5%;
+}
+/* Optional: Ensure other content is centered properly */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(138deg, rgba(113, 188, 246, 1) 0%, rgba(7, 7, 136, 1) 36%, rgb(0 128 43) 80%);
+}
+
+/* Splash Screen Styles */
+#logo-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Optional overlay */
+    opacity: 1;
+    transition: opacity 2s ease-out;
+}
+
+#logo {
+    width: 200px; /* Set your desired logo size */
+    height: auto;
+}
+
+
+
+/* Main Content (Buttons Screen) */
+#main-content {
+    position: relative;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Center the home page content */
+.home-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+}
+
+.background-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1; /* Ensure background is behind the content */
+}
+
+.logo-center {
+    position: relative;
+    z-index: 1;
+}
+
+.logo-center img {
+    width: 150px;
+    height: auto;
+}
+
+.buttons {
+    position: relative;
+    z-index: 1;
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 18px;
+    margin: 10px;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+/* Animation for fade-in of the main content */
+.fade-in {
+    display: block;
+    animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+.logos {
+    /* display: none; */
+    position: absolute;
+    top: 20px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.show-logos .logos {
+    display: flex; /* Flexbox for the logos */
+}
+
+.logo-left, .logo-right {
+    width: 100px;
+    height: auto;
+}
+
+
+
+.pdf-container {
+    position: relative;
+    width: 80%; /* Adjust width based on your layout */
+    max-width: 100%;
+    height: 80%; /* You can adjust this to fit your layout, 80% of the viewport or whatever works */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+
+h1, h2 {
+    text-align: center;
+    color: #4CAF50;
+}
+
+.hidden {
+    display: none;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+.form-entry-signature {
+    margin-bottom: 20px;
+}
+
+/* Container for the signature canvas and button */
+.signature-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* Style the signature canvas */
+#signatureCanvas {
+    border: 1px solid #ccc;
+    width: 80%; /* Resize canvas to fit the form */
+    height: 150px;
+    margin-bottom: 10px;
+}
+
+/* Button to clear the signature */
+#clear-signature {
+    /* background-color: #f2f2f2; */
+    /* border: 1px solid #ccc; */
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* Style the submit button */
+button[type="submit"] {
+    padding: 10px 20px;
+    /* background-color: #007BFF; */
+    border: none;
+    /* color: white; */
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+/* Layout for screens */
+/* #home-screen, */
+#about-us-screen,
+#view-book-screen,
+#start-form-screen {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-top: -159px;
+    height: 75%;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+table th,
+table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+table th {
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="date"],
+textarea,
+select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 16px;
+}
+
+textarea {
+    resize: none;
+    height: 100px;
+}
+
+#photoCanvas {
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    display: block;
+    max-width: 100%;
+}
+
+/* Back to Home Button */
+/* button.back-to-home {
+    background-color: #f44336;
+}
+
+button.back-to-home:hover {
+    background-color: #d32f2f;
+} */
+
+.back-to-home {
+    padding: 10px 20px;
+    /* background-color: #007BFF; */
+    border: none;
+    /* color: white; */
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+/* Upload and Capture Modes */
+#upload-mode,
+#capture-mode {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+video {
+    max-width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+img {
+    max-width: 100px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#view-book-screen {
+    text-align: center; /* Center align the content in this section */
+    margin-top: 1.5rem;
+}
+
+#entries-table {
+    width: 100%; /* Make the table take full width */
+    border-collapse: collapse; /* Remove double borders */
+    margin: 0 auto; /* Center align the table */
+}
+
+#entries-table th, #entries-table td {
+    padding: 10px;
+    text-align: center;
+}
+
+#entries-table th {
+    background-color: #007bff;
+    color: white;
+}
+
+#entries-table td img {
+    max-width: 100px;
+    height: auto;
+}
+.form-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+/* Responsive Styles */
+/* @media (max-width: 768px) {
+    body {
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+
+    #home-screen,
+    #about-us-screen,
+    #view-book-screen,
+    #start-form-screen {
+        padding: 15px;
+        margin: 20px 10px;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    table th,
+    table td {
+        padding: 8px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea,
+    select {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    textarea {
+        height: 80px;
+    }
+
+    video {
+        max-width: 100%;
+        height: auto;
+    }
+
+    img {
+        max-width: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1, h2 {
+        font-size: 18px;
+    }
+
+    button {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    table {
+        font-size: 12px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea,
+    select {
+        font-size: 12px;
+        padding: 6px;
+    }
+
+    textarea {
+        height: 60px;
+    }
+
+    img {
+        max-width: 60px;
+    }
+} */
