@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Visitor Book</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <img src="images/loader.gif" alt="Loader" id="loader-image">
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content" class="hidden">
+        <img src="images/fmnsign.png" alt="Left Logo" id="left-logo" class="logo">
+        <img src="images/jimmylogo.png" alt="Right Logo" id="right-logo" class="logo">
+
+        <div id="header">
+            <div class="center-logo">
+                <img src="images/buildingpic.png" alt="Center Logo" width="150">
+            </div>
+            <h1>Digital Visitor Book</h1>
+        </div>
+
+        <div id="buttons">
+            <button id="view-pdf">View Sample PDF</button>
+            <button id="view-entries">View Entries</button>
+            <button id="new-entry">New Entry</button>
+        </div>
+
+        <!-- Form for New Entry -->
+        <div id="new-entry-form" class="hidden">
+            <form id="visitor-form">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" required><br><br>
+
+                <label for="rank">Rank</label>
+                <input type="text" id="rank" name="rank" required><br><br>
+
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required><br><br>
+
+                <label for="decoration">Decoration</label>
+                <input type="text" id="decoration" name="decoration" required><br><br>
+
+                <label for="remarks">Remarks</label>
+                <textarea id="remarks" name="remarks" required></textarea><br><br>
+
+                <!-- Signature Canvas -->
+                <label for="signature">Signature</label><br>
+                <canvas id="signature-pad" width="400" height="150" style="border: 1px solid #000;"></canvas><br>
+                <button type="button" id="clear-signature">Clear Signature</button>
+                <input type="hidden" id="signature-data" name="signature"><br><br>
+
+                <button type="submit">Submit</button>
+                <button type="button" id="reset-form">Reset</button>
+                <button type="button" id="back-home-from-form">Back to Home</button>
+            </form>
+        </div>
+
+        <!-- View Entries -->
+        <div id="entries-list" class="hidden">
+            <h2>Visitor Entries</h2>
+            <table border="1" id="entries-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Decoration</th>
+                        <th>Remarks</th>
+                        <th>Signature</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Entries will be dynamically loaded here -->
+                </tbody>
+            </table>
+            <button id="back-home">Back to Home</button>
+        </div>
+
+        <!-- PDF Viewer -->
+        <div id="pdf-viewer" class="hidden">
+            <h2>Sample PDF</h2>
+            <iframe src="/view-pdf" width="80%" height="600px"></iframe><br><br>
+            <button id="back-home-from-pdf">Back to Home</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

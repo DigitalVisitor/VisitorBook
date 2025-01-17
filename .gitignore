@@ -1,0 +1,9 @@
+/node_modules
+/.tern-project
+/target
+/.settings/
+.settings/
+*.log
+*.classpath
+*.project
+src/main/webapp/dist/
