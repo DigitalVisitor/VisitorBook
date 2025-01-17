@@ -1,131 +1,132 @@
 require('dotenv').config();
 const express = require('express');
-const bodyParser = require('body-parser');
-const sqlite3 = require('sqlite3').verbose();
+const multer = require('multer');
+const { Pool } = require('pg');
 const path = require('path');
+const bodyParser = require('body-parser');
+
 const app = express();
 const port = process.env.PORT || 4000;
-const fs = require('fs');
-const dbPath = process.env.DATABASE_PATH || '/mnt/data/database.db';
-let db ;
+
+// PostgreSQL Database Configuration
+// const pool = new Pool({
+//     user: 'postgres',
+//     host: 'localhost',
+//     database: 'regional_network',
+//     password: 'admin',
+//     port: 5432,
+// });
+
+// PostgreSQL Configuration
+const isProduction = process.env.NODE_ENV === 'production'
+    ? process.env.RENDER_INTERNAL_DATABASE_URL // Use the internal URL in production
+    : process.env.RENDER_EXTERNAL_DATABASE_URL;
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: isProduction
+        ? { rejectUnauthorized: false } // For Render
+        : false, // For local
+});
+
 // Middleware
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Check if the directory exists
-fs.access('/mnt/data', fs.constants.F_OK, (err) => {
-    if (err) {
-        console.error("Directory /mnt/data does not exist or is not accessible.");
-        // Create the directory
-        fs.mkdir('/mnt/data', { recursive: true }, (err) => {
-            if (err) {
-                console.error('Error creating /mnt/data directory:', err);
-                return; // If directory creation fails, don't proceed with database
-            }
-            console.log('/mnt/data directory created successfully.');
-            
-            // Now try to open the database
-            openDatabase();
-        });
-    } else {
-        console.log("/mnt/data directory is accessible.");
-        openDatabase();
-    }
+// Multer Configuration for File Uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    },
 });
 
-// Function to open the SQLite database
-function openDatabase() {
-    const db = new sqlite3.Database(dbPath, (err) => {
-        if (err) {
-            console.error('Error opening database:', err);
+const upload = multer({
+    storage,
+    fileFilter: (req, file, cb) => {
+        const fileTypes = /jpeg|jpg|png/;
+        const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = fileTypes.test(file.mimetype);
+
+        if (extname && mimetype) {
+            cb(null, true);
         } else {
-            console.log('Database opened successfully at path:', dbPath);
+            cb(new Error('Only images (JPEG/PNG) are allowed'));
         }
-    });
-}
-
-// Check if the database file exists
-fs.access(dbPath, fs.constants.F_OK, (err) => {
-    if (err) {
-        console.log(`Database file does not exist at ${dbPath}. It will be created.`);
-    } else {
-        console.log(`Database file exists at ${dbPath}.`);
-    }
+    },
 });
 
-// SQLite Database setup
-console.log("Database Path:", dbPath);
+// Routes
 
-function openDatabase() {
- db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error('Error opening database:', err);
-    } else {
-        console.log('Database opened successfully');
-        // Create the table if it doesn't exist
-        db.run(`
-            CREATE TABLE IF NOT EXISTS entries (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                date TEXT,
-                rank TEXT,
-                name TEXT,
-                decoration TEXT,
-                remarks TEXT,
-                signature TEXT
-            )
-        `);
-    }
-});
-}
-// Home route
+// Serve the main HTML page
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname,'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Serve local PDF
+// Serve the About Us PDF
 app.get('/view-pdf', (req, res) => {
+    const pdfPath = path.join(__dirname, 'public', '/VISITOR-BOOK-ABOUT-US.pdf');
     res.setHeader('Content-Type', 'application/pdf');
-    res.sendFile(path.join(__dirname, 'public','VISITOR-BOOK-ABOUT-US.pdf'), (err) => {
-        if (err) {
-            console.error(err);
-            res.status(404).send('PDF file not found');
-        }
-    });
+    res.sendFile(pdfPath);
 });
 
-// Handle form submission (new entry)
-app.post('/submit-entry', (req, res) => {
-    const { date, rank, name, decoration, remarks, signature } = req.body;
+// Handle form submission
+app.post('/submit-entry', upload.single('photo'), async (req, res) => {
+    const { date, name_rank, address, decoration, remarks, signature} = req.body;
+    const photoPath = req.file ? req.file.path : req.body.captured_image;
 
-    // Validate input data
-    if (!date || !rank || !name || !decoration || !remarks || !signature) {
-        return res.status(400).json({ error: 'All fields are required!' });
+    if (!date || !name_rank || !address) {
+        return res.status(400).json({ error: 'Required fields are missing!' });
     }
 
-    // Insert data into SQLite database
-    const query = `
-        INSERT INTO entries (date, rank, name, decoration, remarks, signature)
-        VALUES (?, ?, ?, ?, ?, ?)
+    try {
+        const client = await pool.connect();
+
+        // Insert into user_data table
+        const userDataQuery = `
+        INSERT INTO user_data (date, name_rank, address, decoration, remarks, photo_path, signature)
+        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id
     `;
-    db.run(query, [date, rank, name, decoration, remarks, signature], function(err) {
-        if (err) {
-            console.error('Database Insert Error:', err);
-            return res.status(500).json({ error: 'Failed to insert data into the database.' });
-        }
+    console.log('Inserting values:', date, name_rank, address, decoration, remarks, photoPath, signature);
+    console.log('Query:', userDataQuery);
+        const result = await client.query(userDataQuery, [
+            date,
+            name_rank,
+            address,
+            decoration || null,
+            remarks || null,
+            photoPath || null,
+            signature || null,
+        ]);
+
+        client.release();
+
         res.status(200).json({ message: 'Entry submitted successfully!' });
-    });
+    } catch (error) {
+        console.error('Error inserting entry:', error);
+        res.status(500).json({ error: 'Failed to submit data.' });
+    }
 });
 
-// Fetch all entries
-app.get('/get-entries', (req, res) => {
-    const query = 'SELECT * FROM entries';
-    db.all(query, [], (err, rows) => {
-        if (err) {
-            return res.status(500).json({ error: 'Failed to retrieve entries.' });
-        }
-        res.json(rows);
-    });
+// Fetch entries
+app.get('/get-entries', async (req, res) => {
+    try {
+        const client = await pool.connect();
+
+        const query = `
+            SELECT id, date, name_rank, address, decoration, remarks, photo_path, signature
+            FROM user_data
+        `;
+        const result = await client.query(query);
+
+        client.release();
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error fetching entries:', error);
+        res.status(500).json({ error: 'Failed to retrieve entries.' });
+    }
 });
 
 // Start the server
