@@ -67,7 +67,7 @@ app.get('/', (req, res) => {
 
 // Serve the About Us PDF
 app.get('/view-pdf', (req, res) => {
-    const pdfPath = path.join(__dirname, 'public', '/VISITOR-BOOK-ABOUT-US.pdf');
+    const pdfPath = path.join(__dirname, 'public', '/VISITOR-BOOK-ABOUT-US-SC.pdf');
     res.setHeader('Content-Type', 'application/pdf');
     res.sendFile(pdfPath);
 });
